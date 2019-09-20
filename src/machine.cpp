@@ -91,7 +91,13 @@ void machine::execAdd()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
-    result.add(x,y);
+    // OpType x = OpType::typeOf(x.entry)
+    // OpType y = OpType::typeOf(x.entry)
+    // m_boxOp->reset(); 
+    // m_boxOp->add(x, y);
+    // OpType res = m_boxCast->value();
+    // auto e = res.entry()
+    // result.entry = e;
     std::cout << result.getValue() << '\n';
     push(result);
     if (static_cast<size_t>(m_ip) >= m_memsize) {

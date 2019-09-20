@@ -10,15 +10,15 @@
 
 namespace stackmachine {
 
-    enum class DataType {
-        INT = 64,
+    enum class DataType { //NOTE: The order is important!
+        SHORT = 64,
+        INT,
+	LONG,
         FLOAT,
-        SHORT,
-        LONG
     };
 
     enum class OperandType {
-	DATA,
+	DATA = 255,
 	SYMBOL
     };
 
@@ -41,7 +41,7 @@ namespace stackmachine {
     {
 	return *((T *)&u);
     }
-
+    
     struct OperandObject {
 	size_t nbytes;
 	DataType type;
@@ -53,144 +53,6 @@ namespace stackmachine {
 	void div(const OperandObject &x, const OperandObject &y);
     };
 
-
-
-    template <DataType v>
-    struct Data2Type {
-        enum {value = v};
-    };
-
-    template <typename T>
-    struct TypeOf 
-    {
-        typedef T type;
-    };
-
-    template <typename T>
-    TypeOf<T> type_of(const T& v )
-    {
-	return TypeOf<T>();
-    }
-
-    typedef Data2Type<DataType::INT> Int_;
-    typedef Data2Type<DataType::FLOAT> Float_;
-    typedef Data2Type<DataType::SHORT> Short_;
-    typedef Data2Type<DataType::LONG> Long_;
-
-    template <typename T>
-    auto getValue(const OperandObject &op)
-    {
-	if constexpr (std::is_same<Int_, T>::value) {
-	    return op.entry.datai;
-	} else if constexpr (std::is_same<Float_, T>::value) {
-	   return op.entry.dataf;
-	} else if constexpr (std::is_same<Long_, T>::value) {
-	   return op.entry.datal;
-	} else if constexpr (std::is_same<Short_, T>::value) {
-	   return op.entry.datas;
-	} else {
-	   return op.entry.datai;	
-	}
-    }
-
-        
-	void OperandObject::add(const OperandObject &x, const OperandObject &y) 
-	{
-	    if (x.type == DataType::FLOAT) {
-		
-		entry.dataf = get<float>(x.entry) + getValue<Int_>(y);
-		return;
-	    }
-
-	    if (x.type == DataType::INT) {
-		entry.datai = get<int>(x.entry) + getValue<Int_>(y);
-		return;
-	    }
-
-	    if (x.type == DataType::SHORT) {
-		entry.datas = get<short>(x.entry) + getValue<Short_>(y);
-		return;
-	    }
-
-	    if (x.type == DataType::LONG) {
-	        entry.datal = get<long>(x.entry) + getValue<Long_>(y);
-		return;
-	    }
-
-	}
-
-
-	/*void OperandObject::sub(const OperandObject &x, const OperandObject &y) 
-	{
-	    if (x.type == DataType::FLOAT) {
-		entry.dataf = get<float>(x.entry) - getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::INT) {
-		entry.datai = get<int>(x.entry) - getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::SHORT) {
-		entry.datas = get<short>(x.entry) - getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::LONG) {
-	        entry.datal = get<long>(x.entry) - getValue(y.type, y);
-		return;
-	    }
-
-	}
-
-	void OperandObject::mul(const OperandObject &x, const OperandObject &y)
-	{
-	    if (x.type == DataType::FLOAT) {
-		entry.dataf = get<float>(x.entry) * getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::INT) {
-		entry.datai = get<int>(x.entry) * getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::SHORT) {
-		entry.datas = get<short>(x.entry) * getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::LONG) {
-	        entry.datal = get<long>(x.entry) * getValue(y.type, y);
-		return;
-	    }
-
-	}
-
-
-	void OperandObject::div(const OperandObject &x, const OperandObject &y)
-	{
-	    if (x.type == DataType::FLOAT) {
-		entry.dataf = get<float>(x.entry) / getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::INT) {
-		entry.datai = get<int>(x.entry) / getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::SHORT) {
-		entry.datas = get<short>(x.entry) / getValue(y.type, y);
-		return;
-	    }
-
-	    if (x.type == DataType::LONG) {
-	        entry.datal = get<long>(x.entry) / getValue(y.type, y);
-		return;
-	    }
-	}*/
 
 	static auto createFromOperands(const OperandObject &x, const OperandObject &y)
 	{

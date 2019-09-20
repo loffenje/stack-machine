@@ -33,8 +33,24 @@ if x is int, then wait for z
    if y is long, then init z as long and add long y to x
 
 
-z = CAST(x, y)
-
-
 Type(z) = WhatType(x) + WhatType(y)
 
+WhatType(x) 
+ e.g. INT
+
+WhatType(y)
+ e.g. FLOAT
+
+
+then 
+
+get<int>(x.entry) + get<float>(y.entry)
+
+DefineCastToType(INT,FLOAT)
+   if (FLOAT > INT) return float
+
+then entry.dataf = 
+
+//
+
+TypeHolder
