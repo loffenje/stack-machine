@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "machine.hpp"
+#include "runtime_type.hpp"
 
 using namespace stackmachine;
 
@@ -91,14 +92,12 @@ void machine::execAdd()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
-    // OpType x = OpType::typeOf(x.entry)
-    // OpType y = OpType::typeOf(x.entry)
-    // m_boxOp->reset(); 
-    // m_boxOp->add(x, y);
-    // OpType res = m_boxCast->value();
-    // auto e = res.entry()
-    // result.entry = e;
-    std::cout << result.getValue() << '\n';
+    Number *numX = valueOf(x)
+    Number *numY = valueOf(y)
+    m_box.add({numX, numY});
+    Number *value = m_box.value();
+    auto e = typeOf(value)
+    result.entry = e;
     push(result);
     if (static_cast<size_t>(m_ip) >= m_memsize) {
 	// halt
@@ -111,8 +110,6 @@ void machine::execSub()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
-    result.sub(x,y);
-    std::cout << result.getValue() << '\n';
     push(result);
     
 }
@@ -122,8 +119,6 @@ void machine::execMul()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
-    result.mul(x,y);
-    std::cout << result.getValue() << '\n';
     push(result);
 }
 
@@ -133,8 +128,6 @@ void machine::execDiv()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
-    result.div(x,y);
-    std::cout << result.getValue() << '\n';
     push(result);
 }
 

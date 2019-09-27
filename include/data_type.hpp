@@ -3,10 +3,8 @@
 
 #include <unordered_map>
 #include <string>
-#include <list>
-#include <type_traits>
 #include <utility>
-#include <functional>
+#include <vector>
 
 namespace stackmachine {
 
@@ -22,13 +20,6 @@ namespace stackmachine {
 	SYMBOL
     };
 
-    static std::unordered_map<DataType, std::string> datatypes {
-        {DataType::INT, "i"},
-        {DataType::FLOAT, "f"},
-        {DataType::SHORT, "s"},
-        {DataType::LONG, "l"}
-    };
-
     union OperandEntry {
 	int datai;
 	float dataf;
@@ -36,6 +27,13 @@ namespace stackmachine {
 	long datal;
     };
     
+    static std::unordered_map<DataType, std::string> datatypes {
+	{DataType::INT, "i"},
+	{DataType::FLOAT, "f"},
+	{DataType::SHORT, "s"},
+        {DataType::LONG, "l"}
+    };
+
     template <typename T>
     constexpr T &get(const OperandEntry &u)
     {
@@ -46,34 +44,29 @@ namespace stackmachine {
 	size_t nbytes;
 	DataType type;
 	OperandEntry entry;
-
-	void add(const OperandObject &x, const OperandObject &y);
-	void sub(const OperandObject &x, const OperandObject &y); 
-	void mul(const OperandObject &x, const OperandObject &y); 
-	void div(const OperandObject &x, const OperandObject &y);
     };
 
 
-	static auto createFromOperands(const OperandObject &x, const OperandObject &y)
-	{
-	    OperandObject result;
-            if (x.type == DataType::FLOAT || y.type == DataType::FLOAT) {
-                result.type = DataType::FLOAT;
-                result.nbytes = sizeof(float);
-    	    }
+    static auto createFromOperands(const OperandObject &x, const OperandObject &y)
+    {
+	OperandObject result;
+        if (x.type == DataType::FLOAT || y.type == DataType::FLOAT) {
+            result.type = DataType::FLOAT;
+            result.nbytes = sizeof(float);
+	}
     
-    	    if (x.type == DataType::LONG || y.type == DataType::LONG) {
-                result.type = DataType::LONG;
-		result.nbytes = sizeof(long);
-    	    }
+	if (x.type == DataType::LONG || y.type == DataType::LONG) {
+            result.type = DataType::LONG;
+	    result.nbytes = sizeof(long);
+	}
 
-    	   if (x.type == DataType::INT || y.type == DataType::INT) {
-      	       result.type = DataType::INT;
-       	       result.nbytes = sizeof(int);
-    	   }	
+	if (x.type == DataType::INT || y.type == DataType::INT) {
+	    result.type = DataType::INT;
+	    result.nbytes = sizeof(int);
+	}	
 	   
-           return result;
-       }
+        return result;
+   }
     
     struct SymbolObject {
 	std::string name;
@@ -84,7 +77,7 @@ namespace stackmachine {
     template <typename Hash, typename T>
     class HashTableIt {
     public:
-    	using value_type = T;
+	using value_type = T;
         using reference = T&;
 	using pointer = T*;
  
@@ -146,64 +139,23 @@ namespace stackmachine {
 
     public:
 	
-	std::pair<iterator, bool> insert(const std::string &key, OperandEntry &&symbol) {
-	    return insert_impl(key, std::move(symbol));
-	}
+	std::pair<iterator, bool> insert(const std::string &key, OperandEntry &&symbol);
 
+	std::pair<iterator, bool> insert(const std::string &key, OperandEntry &symbol);
 
-	std::pair<iterator, bool> insert(const std::string &key, OperandEntry &symbol) {
-	    return insert_impl(key, std::move(symbol));
-	}
-
-	std::pair<iterator, bool> insert(const value_type &value) {
-	    return insert_impl(value.first, value.second);
-	}
-
+	std::pair<iterator, bool> insert(const value_type &value);
 	
-	std::pair<iterator, bool> insert(value_type &&value) {
-	    return insert_impl(value.first, std::move(value.second));
-	}
-        
-	const_iterator lookup(const std::string &symbol) const {
-	    for (size_t i = getIndexByKey(symbol);; i = probeForward(i)) {
-		if (m_buckets[i].first.compare(symbol) == 0) {
-		    return const_iterator(this, i);
-		}
-	    }
+	std::pair<iterator, bool> insert(value_type &&value);
 
-	    return cend();
-	}
+	const_iterator lookup(const std::string &symbol) const;
 
-	const OperandEntry at(const std::string &symbol) const 
-	{
-	    const_iterator it = lookup(symbol);
+	const OperandEntry at(const std::string &symbol) const;
 
-	    if (it != cend()) {
-		return it->second;
-	    }
+	void reserve(size_t size);
 
-	    std::out_of_range{"the symbol is out of range"};
-	}
+	void rehash(size_t size);
 
-	void reserve(size_t size)
-	{
-	    if (size * 2 > m_buckets.size()) {
-		rehash(size << 1);
-	    }
-	}
-
-	void rehash(size_t size)
-	{
-	    size_t new_size = std::max(size, m_size * 2);
-	    SymbolTable other(*this, new_size);
-	    swap(other);
-	}
-
-	void swap(SymbolTable &other)
-	{
-	    std::swap(m_buckets, other.m_buckets);
-	    std::swap(m_size, other.m_size);
-	}
+	void swap(SymbolTable &other);
 
 	iterator begin() { return iterator(this); }
 	iterator end() { return iterator(this, m_buckets.size()); }
@@ -212,36 +164,11 @@ namespace stackmachine {
 	const_iterator cend() const { return const_iterator(this, m_buckets.size()); }
     private:
 
-	size_t getIndexByKey(std::string key) const
-	{
-	    const size_t mask = m_buckets.size() - 1;
+	size_t getIndexByKey(std::string key) const;
 
-	    return std::hash<std::string>{}(key) % mask;
-	}
+	size_t probeForward(size_t i) const;
 
-	size_t probeForward(size_t i) const 
-	{
-	    const size_t mask = m_buckets.size() - 1;
-
-	    return (i + 1) % mask;
-	}
-
-	std::pair<iterator, bool> insert_impl(const std::string &key, const OperandEntry &symbol)
-	{
-	    reserve(m_size + 1);
-	    for (size_t i = getIndexByKey(key);; i = probeForward(i)) {
-		if (m_buckets[i].first.empty()) {
-		    m_buckets[i].second = symbol;
-		    m_buckets[i].first = key;
-		    m_size++;
-
-		    return std::make_pair(iterator(this, i), true);
-		} else if (m_buckets[i].first.compare(key)) {
-		    return std::make_pair(iterator(this, i), false);
-		}
-	    } 
-	}
-
+	std::pair<iterator, bool> insert_impl(const std::string &key, const OperandEntry &symbol);
     private:
 	buckets m_buckets;
 	size_t m_size = 0;
@@ -280,7 +207,7 @@ namespace stackmachine {
 	     OperandType type;
 	     union {
                  OperandObject dataOp;
-  	         SymbolObject symbolOp;
+		 SymbolObject symbolOp;
 	     };
     
 	     Data(const Data &rhs) {
