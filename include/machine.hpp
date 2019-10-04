@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "instruction.hpp"
-#include "data_type.hpp"
+#include "runtime_type.hpp"
 
 namespace stackmachine {
 
@@ -64,6 +64,8 @@ private:
     std::vector<OperandObject> m_operandStack;
 
     SymbolTable m_symbolTable;
+	
+    OpNumerator m_numerator;
 
     byte *m_memory;
 

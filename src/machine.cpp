@@ -71,8 +71,6 @@ void machine::execLoad(const OperandObject &operand)
 
     checkBounds(operand.nbytes, "load");
     push(operand);
-    m_operandStack.emplace_back(operand);
-    
     m_ip += operand.nbytes;
     if (static_cast<size_t>(m_ip) >= m_memsize) {
         // halt
@@ -82,7 +80,7 @@ void machine::execLoad(const OperandObject &operand)
 void machine::execPush(const SymbolObject &symbol)
 {
   auto result = pop();
-  m_symbolTable.insert(symbol.name, result);
+  m_symbolTable.insert(symbol.name, result.entry);
   OperandEntry e = m_symbolTable.at(symbol.name); 
   std::cout << "NAME: " << e.datai << std::endl;
 }
@@ -92,12 +90,13 @@ void machine::execAdd()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
-    Number *numX = valueOf(x)
-    Number *numY = valueOf(y)
-    m_box.add({numX, numY});
-    Number *value = m_box.value();
-    auto e = typeOf(value)
-    result.entry = e;
+    Number *numX = valueOf(x);
+    Number *numY = valueOf(y);
+    m_numerator.add({numX, numY});
+    Number *num = m_numerator.value();
+    auto entry = typeOf(num);
+    result.entry = entry;
+    std::cout << num->value() << '\n';
     push(result);
     if (static_cast<size_t>(m_ip) >= m_memsize) {
 	// halt
@@ -110,8 +109,17 @@ void machine::execSub()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
+    Number *numX = valueOf(x);
+    Number *numY = valueOf(y);
+    m_numerator.sub({numX, numY});
+    Number *num = m_numerator.value();
+    auto entry = typeOf(num);
+    result.entry = entry;
+    std::cout << num->value() << '\n';
     push(result);
-    
+    if (static_cast<size_t>(m_ip) >= m_memsize) {
+	// halt
+    }
 }
 
 void machine::execMul()
@@ -119,7 +127,17 @@ void machine::execMul()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
+    Number *numX = valueOf(x);
+    Number *numY = valueOf(y);
+    m_numerator.mul({numX, numY});
+    Number *num = m_numerator.value();
+    auto entry = typeOf(num);
+    result.entry = entry;
+    std::cout << num->value() << '\n';
     push(result);
+    if (static_cast<size_t>(m_ip) >= m_memsize) {
+	// halt
+    }
 }
 
 void machine::execDiv()
@@ -128,7 +146,17 @@ void machine::execDiv()
     OperandObject x = pop();
     OperandObject y = pop();
     OperandObject result = OperandObject::createFromOperands(x,y);
+    Number *numX = valueOf(x);
+    Number *numY = valueOf(y);
+    m_numerator.div({numX, numY});
+    Number *num = m_numerator.value();
+    auto entry = typeOf(num);
+    result.entry = entry;
+    std::cout << num->value() << '\n';
     push(result);
+    if (static_cast<size_t>(m_ip) >= m_memsize) {
+	// halt
+    }
 }
 
 void machine::execDump()

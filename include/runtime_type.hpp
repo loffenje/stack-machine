@@ -11,23 +11,53 @@ namespace stackmachine {
 class Number
 {
 public:
-    virtual int dataType() = 0;
-    virtual DataType rawDataType() = 0;
-    virtual void setValue(const std::string &value) = 0;
+    Number() { m_value << 0; }
+    virtual int dataType() const = 0;
+    virtual DataType rawDataType() const = 0;
 
     std::string value() const {
-	return m_value;
+	return m_value.str();
     }
 
-    const std::string &operator+(Number *a, Number *b)
+    std::string add(const std::string &num)
     {
-	std::stringstream ss;
-	ss << std::stod(a->value()) + std::stod(b->value());
+	auto currValue = std::stod(m_value.str());
+	m_value.str("");
+	m_value << currValue + std::stod(num);
 
-	return ss.str();	
+	return m_value.str();	
+    }
+
+
+    std::string sub(const std::string &num)
+    {
+	auto currValue = std::stod(m_value.str());
+	m_value.str("");
+	m_value << currValue - std::stod(num);
+
+	return m_value.str();	
+    }
+
+    std::string mul(const std::string &num)
+    {
+	auto currValue = std::stod(m_value.str());
+	m_value.str("");
+	m_value << currValue * std::stod(num);
+
+	return m_value.str();	
+    }
+
+    std::string div(const std::string &num)
+    {
+	auto currValue = std::stod(m_value.str());
+	m_value.str("");
+	m_value << currValue / std::stod(num);
+
+	return m_value.str();	
     }
 
     virtual ~Number() {}
+
 protected:
     std::stringstream m_value;
 };
@@ -39,19 +69,12 @@ public:
     Short() = default;
     Short(short value) { m_value << value; }
     
-    DataType rawDataType() override {
+    DataType rawDataType() const override {
 	return DataType::SHORT;
     }
 
-    int dataType() override {
+    int dataType() const override {
 	return static_cast<int>(rawDataType());
-    }
-
-    void setValue(const std::string &value) override {
-	short currValue = static_cast<short>(std::stoi(m_value));
-	short val = static_cast<short>(std::stoi(value));
-
-	m_value << currValue + val;
     }
 };
 
@@ -61,20 +84,13 @@ public:
     Int() = default;
     Int(int value) {m_value << value;}
     
-    DataType rawDataType() override
+    DataType rawDataType() const override
     {
 	return DataType::INT;
     }
 
-    int dataType() override {
+    int dataType() const override {
 	return static_cast<int>(rawDataType());
-    }
-
-    void setValue(const std::string &value) override {
-	int currValue = std::stoi(m_value);
-	int val = std::stoi(value);
-
-	m_value << currValue + val;
     }
 };
 
@@ -85,20 +101,13 @@ public:
     Long() = default;
     Long(long value) { m_value << value; }
     
-    DataType rawDataType() override 
+    DataType rawDataType() const override 
     {
         return DataType::LONG;
     }
 
-    int dataType() override {
+    int dataType() const override {
 	return static_cast<int>(rawDataType());
-    }
-
-    void setValue(const std::string &value) override {
-	long currValue = std::stol(m_value);
-	long val = std::stol(value);
-
-	m_value << currValue + val;
     }
 };
 
@@ -109,20 +118,13 @@ public:
     
     Float(float value) {m_value << value; }
 
-    DataType rawDataType() override 
+    DataType rawDataType() const override 
     {
 	return DataType::FLOAT;
     }
 
-    int dataType() override {
+    int dataType() const override {
 	return static_cast<int>(rawDataType());
-    }
-
-    void setValue(const std::string &value) override {
-	float currValue = std::stof(m_value);
-	float val = std::stof(value);
-
-	m_value << currValue + val;
     }
 };
 
@@ -146,6 +148,9 @@ public:
     {
 	return m_value;
     }
+
+private:
+    Number *getPriorNumber(std::initializer_list<Number *>) const;
 
 private:
     Number *m_value;

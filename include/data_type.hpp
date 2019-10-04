@@ -44,30 +44,29 @@ namespace stackmachine {
 	size_t nbytes;
 	DataType type;
 	OperandEntry entry;
+
+        static auto createFromOperands(const OperandObject &x, const OperandObject &y)
+        {
+	    OperandObject result;
+            if (x.type == DataType::FLOAT || y.type == DataType::FLOAT) {
+                result.type = DataType::FLOAT;
+                result.nbytes = sizeof(float);
+	    }
+    
+	    if (x.type == DataType::LONG || y.type == DataType::LONG) {
+                result.type = DataType::LONG;
+	        result.nbytes = sizeof(long);
+	    }
+
+	    if (x.type == DataType::INT || y.type == DataType::INT) {
+	        result.type = DataType::INT;
+	        result.nbytes = sizeof(int);
+	    }	
+	   
+            return result;
+        }
     };
 
-
-    static auto createFromOperands(const OperandObject &x, const OperandObject &y)
-    {
-	OperandObject result;
-        if (x.type == DataType::FLOAT || y.type == DataType::FLOAT) {
-            result.type = DataType::FLOAT;
-            result.nbytes = sizeof(float);
-	}
-    
-	if (x.type == DataType::LONG || y.type == DataType::LONG) {
-            result.type = DataType::LONG;
-	    result.nbytes = sizeof(long);
-	}
-
-	if (x.type == DataType::INT || y.type == DataType::INT) {
-	    result.type = DataType::INT;
-	    result.nbytes = sizeof(int);
-	}	
-	   
-        return result;
-   }
-    
     struct SymbolObject {
 	std::string name;
 	uint32_t stack_pos;
