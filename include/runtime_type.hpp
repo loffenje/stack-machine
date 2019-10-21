@@ -11,7 +11,7 @@ namespace stackmachine {
 class Number
 {
 public:
-    Number() { m_value << 0; }
+    Number() { m_value << ""; }
     virtual int dataType() const = 0;
     virtual DataType rawDataType() const = 0;
 
@@ -19,41 +19,50 @@ public:
 	return m_value.str();
     }
 
-    std::string add(const std::string &num)
+    void add(const std::string &num)
     {
-	auto currValue = std::stod(m_value.str());
+	auto currValue = m_value.str().empty() ? 0 : std::stod(m_value.str());
 	m_value.str("");
 	m_value << currValue + std::stod(num);
-
-	return m_value.str();	
     }
 
 
-    std::string sub(const std::string &num)
+    void sub(const std::string &num)
     {
+	if (m_value.str().empty()) {
+	    m_value << std::stod(num);
+	    return;
+	}
+
 	auto currValue = std::stod(m_value.str());
 	m_value.str("");
 	m_value << currValue - std::stod(num);
-
-	return m_value.str();	
     }
 
-    std::string mul(const std::string &num)
+    void mul(const std::string &num)
     {
-	auto currValue = std::stod(m_value.str());
+
+	if (m_value.str().empty()) {
+	    m_value << std::stod(num);
+	    return;
+	}
+
+    	auto currValue = std::stod(m_value.str());
 	m_value.str("");
 	m_value << currValue * std::stod(num);
-
-	return m_value.str();	
     }
 
-    std::string div(const std::string &num)
+    void div(const std::string &num)
     {
-	auto currValue = std::stod(m_value.str());
+
+	if (m_value.str().empty()) {
+	    m_value << std::stod(num);
+	    return;
+	}
+
+    	auto currValue = std::stod(m_value.str());
 	m_value.str("");
 	m_value << currValue / std::stod(num);
-
-	return m_value.str();	
     }
 
     virtual ~Number() {}

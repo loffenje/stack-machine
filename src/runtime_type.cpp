@@ -58,7 +58,7 @@ OperandEntry stackmachine::typeOf(Number *number)
 }
 
 Number *OpNumerator::getPriorNumber(std::initializer_list<Number *> li) const
-{
+{   
     Number *number = *std::max_element(li.begin(), li.end(), [](const Number *a, const Number *b) { 
 		    	return a->dataType() < b->dataType();
 		     });
@@ -79,9 +79,9 @@ Number *OpNumerator::getPriorNumber(std::initializer_list<Number *> li) const
 	    break;
     }
 
-
     return priorNumber;
 }
+
 
 void OpNumerator::add(std::initializer_list<Number *> li)
 {
@@ -119,110 +119,108 @@ void OpNumerator::add(std::initializer_list<Number *> li)
 }
 
 
-void OpNumerator::sub(std::initializer_list<Number *> li)
+void OpNumerator::sub(std::initializer_list<Number*> li)
 {
-    Number *priorNumber = getPriorNumber(li);
-    for (const auto &item : li) {
-	switch (item->rawDataType()) {
-	case DataType::SHORT: {
-	    Short *n = static_cast<Short *>(item);
-	    priorNumber->sub(n->value());
-	    break;
+	Number* priorNumber = getPriorNumber(li);
+	for (const auto& item : li) {
+		switch (item->rawDataType()) {
+		case DataType::SHORT: {
+			Short* n = static_cast<Short*>(item);
+			priorNumber->sub(n->value());
+			break;
+		}
+
+		case DataType::INT: {
+			Int* n = static_cast<Int*>(item);
+			priorNumber->sub(n->value());
+			break;
+		}
+
+		case DataType::LONG: {
+			Long* n = static_cast<Long*>(item);
+			priorNumber->sub(n->value());
+			break;
+		}
+
+		case DataType::FLOAT: {
+			Float* n = static_cast<Float*>(item);
+			priorNumber->sub(n->value());
+			break;
+		}
+
+		}
 	}
 
-	case DataType::INT: {
-	    Int *n = static_cast<Int *>(item);
-	    priorNumber->sub(n->value());
-	    break;
-	}
-
-	case DataType::LONG: {
-	    Long *n = static_cast<Long *>(item);
-	    priorNumber->sub(n->value());
-	    break;	
-	}
-
-	case DataType::FLOAT: {
-	    Float *n = static_cast<Float *>(item);
-	    priorNumber->sub(n->value());
-	    break;
-	}
-
-	}
-    }
-
-    m_value = priorNumber;
+	m_value = priorNumber;
 }
 
 
-void OpNumerator::mul(std::initializer_list<Number *> li)
+void OpNumerator::mul(std::initializer_list<Number*> li)
 {
-    Number *priorNumber = getPriorNumber(li);
-    for (const auto &item : li) {
-	switch (item->rawDataType()) {
-	case DataType::SHORT: {
-	    Short *n = static_cast<Short *>(item);
-	    priorNumber->mul(n->value());
-	    break;
+	Number* priorNumber = getPriorNumber(li);
+	for (const auto& item : li) {
+		switch (item->rawDataType()) {
+		case DataType::SHORT: {
+			Short* n = static_cast<Short*>(item);
+			priorNumber->mul(n->value());
+			break;
+		}
+
+		case DataType::INT: {
+			Int* n = static_cast<Int*>(item);
+			priorNumber->mul(n->value());
+			break;
+		}
+
+		case DataType::LONG: {
+			Long* n = static_cast<Long*>(item);
+			priorNumber->mul(n->value());
+			break;
+		}
+
+		case DataType::FLOAT: {
+			Float* n = static_cast<Float*>(item);
+			priorNumber->mul(n->value());
+			break;
+		}
+
+		}
 	}
 
-	case DataType::INT: {
-	    Int *n = static_cast<Int *>(item);
-	    priorNumber->mul(n->value());
-	    break;
-	}
-
-	case DataType::LONG: {
-	    Long *n = static_cast<Long *>(item);
-	    priorNumber->mul(n->value());
-	    break;	
-	}
-
-	case DataType::FLOAT: {
-	    Float *n = static_cast<Float *>(item);
-	    priorNumber->mul(n->value());
-	    break;
-	}
-
-	}
-    }
-
-    m_value = priorNumber;
+	m_value = priorNumber;
 }
 
-
-void OpNumerator::div(std::initializer_list<Number *> li)
+void OpNumerator::div(std::initializer_list<Number*> li)
 {
-    Number *priorNumber = getPriorNumber(li);
-    for (const auto &item : li) {
-	switch (item->rawDataType()) {
-	case DataType::SHORT: {
-	    Short *n = static_cast<Short *>(item);
-	    priorNumber->div(n->value());
-	    break;
+	Number* priorNumber = getPriorNumber(li);
+	for (const auto& item : li) {
+		switch (item->rawDataType()) {
+		case DataType::SHORT: {
+			Short* n = static_cast<Short*>(item);
+			priorNumber->div(n->value());
+			break;
+		}
+
+		case DataType::INT: {
+			Int* n = static_cast<Int*>(item);
+			priorNumber->div(n->value());
+			break;
+		}
+
+		case DataType::LONG: {
+			Long* n = static_cast<Long*>(item);
+			priorNumber->div(n->value());
+			break;
+		}
+
+		case DataType::FLOAT: {
+			Float* n = static_cast<Float*>(item);
+			priorNumber->div(n->value());
+			break;
+		}
+
+		}
 	}
 
-	case DataType::INT: {
-	    Int *n = static_cast<Int *>(item);
-	    priorNumber->div(n->value());
-	    break;
-	}
-
-	case DataType::LONG: {
-	    Long *n = static_cast<Long *>(item);
-	    priorNumber->div(n->value());
-	    break;	
-	}
-
-	case DataType::FLOAT: {
-	    Float *n = static_cast<Float *>(item);
-	    priorNumber->div(n->value());
-	    break;
-	}
-
-	}
-    }
-
-    m_value = priorNumber;
+	m_value = priorNumber;
 }
-
