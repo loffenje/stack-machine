@@ -26,34 +26,38 @@ static auto findInstr(const std::string &name)
 
 static PackedOperand parseOperand(std::string &operand)
 {
-    // TODO: refactor initialization to construct
-    //
     if (findAndExcludeSymbol(operand, "%")) {
-	SymbolObject entry{operand, 1};
-
-	return PackedOperand(entry);
+	SymbolObject symbol{operand, 1};
+	
+	return PackedOperand{symbol};
     }
 
-    auto obj = OperandObject{};
     if (findAndExcludeSymbol(operand, datatypes[DataType::FLOAT])) {
-	obj.nbytes = sizeof(float);
-	obj.entry.dataf = std::stof(operand);
-	obj.type = DataType::FLOAT;
-    } else if (findAndExcludeSymbol(operand, datatypes[DataType::SHORT])) {
-	obj.nbytes = sizeof(short);
-	obj.entry.datas = static_cast<short>(std::stoi(operand));
-	obj.type = DataType::SHORT;
-    } else if (findAndExcludeSymbol(operand, datatypes[DataType::LONG])) {
-	obj.nbytes = sizeof(long);
-	obj.entry.datal = std::stol(operand);
-	obj.type = DataType::LONG;
-    } else {
-	obj.nbytes = sizeof(int);
-	obj.entry.datai = std::stoi(operand);
-	obj.type = DataType::INT;
-    }		
+	OperandObject op{sizeof(float), DataType::FLOAT};
+	op.entry.dataf = std::stof(operand);
+
+	return PackedOperand{op};
+    }
     
-    return PackedOperand(obj);
+    if (findAndExcludeSymbol(operand, datatypes[DataType::SHORT])) {
+	OperandObject op{sizeof(short), DataType::SHORT};
+	op.entry.datas = static_cast<short>(std::stoi(operand));
+
+	return PackedOperand{op};
+    } 
+    
+    if (findAndExcludeSymbol(operand, datatypes[DataType::LONG])) {
+	OperandObject op{sizeof(long), DataType::LONG};
+	op.entry.datal = std::stol(operand);
+
+	return PackedOperand{op};
+    } 
+
+
+    OperandObject op{sizeof(int), DataType::INT};
+    op.entry.datai = std::stoi(operand);		
+    
+    return PackedOperand{op};
 }
 
 static std::vector<PackedOperand> parseOperands(std::vector<std::string> &operands)

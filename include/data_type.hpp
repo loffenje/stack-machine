@@ -44,6 +44,10 @@ namespace stackmachine {
 	size_t nbytes;
 	DataType type;
 	OperandEntry entry;
+        
+	OperandObject() = default;
+
+	OperandObject(size_t nbytes_, DataType type_): nbytes{nbytes_}, type{type_} {}
 
         static auto createFromOperands(const OperandObject &x, const OperandObject &y)
         {
@@ -81,8 +85,8 @@ namespace stackmachine {
 	using pointer = T*;
  
     public:
-	explicit HashTableIt(): m_st(nullptr), m_index(0) {}
-	explicit HashTableIt(Hash *st, size_t index): m_st(st), m_index(index) {}
+	explicit HashTableIt(): m_st{nullptr}, m_index{0} {}
+	explicit HashTableIt(Hash *st, size_t index): m_st{st}, m_index{index} {}
 	explicit HashTableIt(Hash *st): m_st(st) {} 
 
 	HashTableIt &operator++() {
@@ -173,13 +177,12 @@ namespace stackmachine {
 	size_t m_size = 0;
     };
 
-
     class PackedOperand {
     public:
 	
-	explicit PackedOperand(OperandObject &t): m_data(DataObject::get(std::move(t))) {}
+	explicit PackedOperand(OperandObject &t): m_data{DataObject::get(std::move(t))} {}
 
-	explicit PackedOperand(SymbolObject &t): m_data(DataObject::get(std::move(t))) {}	
+	explicit PackedOperand(SymbolObject &t): m_data{DataObject::get(std::move(t))} {}	
 
         bool isDataOperand() const noexcept
 	{

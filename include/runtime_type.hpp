@@ -8,12 +8,38 @@
 
 namespace stackmachine {
 
-class Number
+
+enum class ObjectType {
+    NUMBER
+    // can be other object types in future ...
+};
+
+struct Object 
+{
+    virtual void mark() = 0;
+
+    bool marked{false};
+    
+    struct Object *next{nullptr};
+
+    ObjectType type;
+
+    virtual ~Object() {} 
+};
+
+class Number : public Object
 {
 public:
     Number() { m_value << ""; }
     virtual int dataType() const = 0;
     virtual DataType rawDataType() const = 0;
+
+    void mark() override 
+    {
+	if (marked) return;
+
+	marked = true;
+    }
 
     std::string value() const {
 	return m_value.str();

@@ -12,13 +12,13 @@ Number *stackmachine::valueOf(const OperandObject &op)
     OperandEntry entry = op.entry;
     switch(op.type) {
     case DataType::INT:
-		return new Int(get<int>(entry));
+	return new Int(get<int>(entry));
     case DataType::FLOAT:
-		return new Float(get<float>(entry));
+	return new Float(get<float>(entry));
     case DataType::LONG:
-		return new Long(get<long>(entry));
+	return new Long(get<long>(entry));
     case DataType::SHORT:
-		return new Short(get<short>(entry));
+	return new Short(get<short>(entry));
     }
 
     throw std::runtime_error{"Invalid type conversion"};
@@ -26,31 +26,29 @@ Number *stackmachine::valueOf(const OperandObject &op)
 
 OperandEntry stackmachine::typeOf(Number *number)
 {
-    OperandEntry entry;
+    OperandEntry opEntry;
     switch (number->rawDataType()) {
     case DataType::SHORT: {
 	    Short *snumber = static_cast<Short *>(number);
-	    entry.datas = static_cast<short>(std::stoi(snumber->value()));
-	    return entry;
+	    opEntry.datas = static_cast<short>(std::stoi(snumber->value()));
+	    return opEntry;
 	}
     case DataType::INT: {
 	    Int *inumber = static_cast<Int *>(number);
-	    entry.datai = std::stoi(inumber->value());
-	     
-	    return entry;
+	    opEntry.datai = std::stoi(inumber->value());
+	    return opEntry;
 	}
 
     case DataType::LONG: {
-	    Long *lnumber = static_cast<Long *>(number);
-	    entry.datal = std::stol(lnumber->value());	
-	    
-	    return entry;
+	    Long *lnumber = static_cast<Long *>(number); 
+	    opEntry.datal = std::stol(lnumber->value());	
+	    return opEntry;
 	}
+
     case DataType::FLOAT: {
-	    Float *fnumber = static_cast<Float *>(number);
-	    entry.dataf = std::stof(fnumber->value());
-	    
-	    return entry;
+	    Float *fnumber = static_cast<Float *>(number); 
+	    opEntry.dataf = std::stof(fnumber->value());
+	    return opEntry;
 	}
     }
 

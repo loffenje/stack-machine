@@ -6,6 +6,7 @@
 
 #include "instruction.hpp"
 #include "runtime_type.hpp"
+#include "gc.hpp"
 
 namespace stackmachine {
 
@@ -13,8 +14,10 @@ class machine {
 public:
     
     typedef unsigned char byte;
+	
+    friend class GC;
 
-    machine(const size_t memsize): m_memsize(memsize), m_memory(new byte[memsize]), m_running(true), m_ip(0), m_sp(0) {}
+    machine(const size_t memsize): m_memsize{memsize}, m_memory{new byte[memsize]} {}
     ~machine() { 
         delete[] m_memory;
     }   
@@ -36,6 +39,10 @@ private:
     
     const OperandObject &pop();
 
+    void pushObj(Object *obj);
+
+    Object *popObj();
+
     bool isRunning() const { return m_running; }
 
     void execLoad(const OperandObject &operand);
@@ -52,6 +59,10 @@ private:
 
     void execDiv();
 
+    void trackObject(Object *object);
+
+    void gc();
+
     void checkBounds(size_t size, const std::string &instr);
 private:
 
@@ -59,19 +70,27 @@ private:
 
     int64_t m_sp;
 
-    std::vector<OperandEntry> m_stack;
+    std::vector<OperandObject> m_stack;
 
-    std::vector<OperandObject> m_operandStack;
+    std::vector<Object *> m_allocObjStack;
 
     SymbolTable m_symbolTable;
-	
+
+    Object *m_firstObject;
+
+    GC m_GC;
+
     OpNumerator m_numerator;
 
     byte *m_memory;
 
     size_t m_memsize;
 
-    bool m_running;
+    int m_numObjects{0};
+
+    int m_maxObjects{GC_THRESHOLD};
+
+    bool m_running{true};
 };
 
 }
