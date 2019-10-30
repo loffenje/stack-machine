@@ -76,7 +76,7 @@ private:
 
     SymbolTable m_symbolTable;
 
-    Object *m_firstObject;
+    Object *m_firstObject{nullptr};
 
     GC m_GC;
 

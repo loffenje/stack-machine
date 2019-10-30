@@ -20,7 +20,7 @@ struct Object
 
     bool marked{false};
     
-    struct Object *next{nullptr};
+    struct Object *next;
 
     ObjectType type;
 
