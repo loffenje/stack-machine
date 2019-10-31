@@ -16,13 +16,13 @@ namespace stackmachine {
 	struct Object {
 		virtual void mark() = 0;
 
-		bool marked{false};
-    
-		struct Object *next;
+		bool marked{ false };
+
+		struct Object* next;
 
 		ObjectType type;
 
-		virtual ~Object() {} 
+		virtual ~Object() {}
 	};
 
 	class Number : public Object
@@ -32,7 +32,7 @@ namespace stackmachine {
 		virtual int dataType() const = 0;
 		virtual DataType rawDataType() const = 0;
 
-		void mark() override 
+		void mark() override
 		{
 			if (marked) return;
 
@@ -43,14 +43,14 @@ namespace stackmachine {
 			return m_value.str();
 		}
 
-		void add(const std::string &num)
+		void add(const std::string& num)
 		{
 			auto currValue = m_value.str().empty() ? 0 : std::stod(m_value.str());
 			m_value.str("");
 			m_value << currValue + std::stod(num);
 		}
 
-		void sub(const std::string &num)
+		void sub(const std::string& num)
 		{
 			if (m_value.str().empty()) {
 				m_value << std::stod(num);
@@ -62,26 +62,26 @@ namespace stackmachine {
 			m_value << currValue - std::stod(num);
 		}
 
-		void mul(const std::string &num)
+		void mul(const std::string& num)
 		{
 			if (m_value.str().empty()) {
 				m_value << std::stod(num);
 				return;
 			}
 
-    		auto currValue = std::stod(m_value.str());
+			auto currValue = std::stod(m_value.str());
 			m_value.str("");
 			m_value << currValue * std::stod(num);
 		}
 
-		void div(const std::string &num)
+		void div(const std::string& num)
 		{
 			if (m_value.str().empty()) {
 				m_value << std::stod(num);
 				return;
 			}
 
-    		auto currValue = std::stod(m_value.str());
+			auto currValue = std::stod(m_value.str());
 			m_value.str("");
 			m_value << currValue / std::stod(num);
 		}
@@ -93,12 +93,12 @@ namespace stackmachine {
 	};
 
 
-	class Short : public Number 
+	class Short : public Number
 	{
 	public:
 		Short() = default;
 		Short(short value) { m_value << value; }
-    
+
 		DataType rawDataType() const override {
 			return DataType::SHORT;
 		}
@@ -108,12 +108,12 @@ namespace stackmachine {
 		}
 	};
 
-	class Int : public Number 
+	class Int : public Number
 	{
 	public:
 		Int() = default;
-		Int(int value) {m_value << value;}
-    
+		Int(int value) { m_value << value; }
+
 		DataType rawDataType() const override
 		{
 			return DataType::INT;
@@ -124,13 +124,13 @@ namespace stackmachine {
 		}
 	};
 
-	class Long : public Number 
+	class Long : public Number
 	{
 	public:
 		Long() = default;
 		Long(long value) { m_value << value; }
-    
-		DataType rawDataType() const override 
+
+		DataType rawDataType() const override
 		{
 			return DataType::LONG;
 		}
@@ -144,10 +144,10 @@ namespace stackmachine {
 	{
 	public:
 		Float() = default;
-    
-		Float(float value) {m_value << value; }
 
-		DataType rawDataType() const override 
+		Float(float value) { m_value << value; }
+
+		DataType rawDataType() const override
 		{
 			return DataType::FLOAT;
 		}
@@ -157,30 +157,30 @@ namespace stackmachine {
 		}
 	};
 
-	Number *valueOf(const OperandObject &op);
-	OperandEntry typeOf(Number *number);
+	Number* valueOf(const OperandObject& op);
+	OperandEntry typeOf(Number* number);
 
-	class OpNumerator 
+	class OpNumerator
 	{
 	public:
-		void add(std::initializer_list<Number *> li);
+		void add(std::initializer_list<Number*> li);
 
-		void sub(std::initializer_list<Number *> li);
+		void sub(std::initializer_list<Number*> li);
 
-		void mul(std::initializer_list<Number *> li);
+		void mul(std::initializer_list<Number*> li);
 
-		void div(std::initializer_list<Number *> li);
+		void div(std::initializer_list<Number*> li);
 
-		Number *value() const 
+		Number* value() const
 		{
 			return m_value;
 		}
 
 	private:
-		Number *getPriorNumber(std::initializer_list<Number *>) const;
+		Number* getPriorNumber(std::initializer_list<Number*>) const;
 
 	private:
-		Number *m_value;
+		Number* m_value;
 	};
 }
 

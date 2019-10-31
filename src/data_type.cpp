@@ -3,46 +3,46 @@
 #include "data_type.hpp"
 
 using namespace stackmachine;
-	
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string &key, OperandEntry &&symbol)
+
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string& key, OperandEntry&& symbol)
 {
 	return insert_impl(key, std::move(symbol));
 }
 
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string &key, OperandEntry &symbol)
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string& key, OperandEntry& symbol)
 {
 	return insert_impl(key, std::move(symbol));
 }
 
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const value_type &value)
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const value_type& value)
 {
 	return insert_impl(value.first, value.second);
 }
-	
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(value_type &&value)
+
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(value_type&& value)
 {
 	return insert_impl(value.first, std::move(value.second));
 }
-        
-SymbolTable::const_iterator SymbolTable::lookup(const std::string &symbol) const 
+
+SymbolTable::const_iterator SymbolTable::lookup(const std::string& symbol) const
 {
 	for (size_t i = getIndexByKey(symbol);; i = probeForward(i)) {
 		if (m_buckets[i].first.compare(symbol) == 0) {
-		    return const_iterator(this, i);
+			return const_iterator(this, i);
 		}
 	}
 
 	return cend();
 }
 
-const OperandEntry SymbolTable::at(const std::string &symbol) const 
+const OperandEntry SymbolTable::at(const std::string& symbol) const
 {
 	const_iterator it = lookup(symbol);
 	if (it != cend()) {
 		return it->second;
 	}
 
-	std::out_of_range{"the symbol is out of range"};
+	std::out_of_range{ "the symbol is out of range" };
 }
 
 void SymbolTable::reserve(size_t size)
@@ -59,7 +59,7 @@ void SymbolTable::rehash(size_t size)
 	swap(other);
 }
 
-void SymbolTable::swap(SymbolTable &other)
+void SymbolTable::swap(SymbolTable & other)
 {
 	std::swap(m_buckets, other.m_buckets);
 	std::swap(m_size, other.m_size);
@@ -72,14 +72,14 @@ size_t SymbolTable::getIndexByKey(std::string key) const
 	return std::hash<std::string>{}(key) % mask;
 }
 
-size_t SymbolTable::probeForward(size_t i) const 
+size_t SymbolTable::probeForward(size_t i) const
 {
 	const size_t mask = m_buckets.size() - 1;
 
 	return (i + 1) % mask;
 }
 
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert_impl(const std::string &key, const OperandEntry &symbol)
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert_impl(const std::string & key, const OperandEntry & symbol)
 {
 	reserve(m_size + 1);
 	for (size_t i = getIndexByKey(key);; i = probeForward(i)) {
@@ -89,8 +89,9 @@ std::pair<SymbolTable::iterator, bool> SymbolTable::insert_impl(const std::strin
 			m_size++;
 
 			return std::make_pair(iterator(this, i), true);
-		} else if (m_buckets[i].first.compare(key)) {
+		}
+		else if (m_buckets[i].first.compare(key)) {
 			return std::make_pair(iterator(this, i), false);
 		}
-	} 
+	}
 }

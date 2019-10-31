@@ -15,32 +15,32 @@ namespace stackmachine {
 	class machine {
 	public:
 		friend class GC;
-		machine(const size_t memsize): m_memsize{memsize} {}
+		machine(const size_t memsize) : m_memsize{ memsize } {}
 
-		void execute(Instruction opcode, std::vector<PackedOperand> &&operands);
+		void execute(Instruction opcode, std::vector<PackedOperand>&& operands);
 
-		void execute(Instruction opcode, PackedOperand &operand);
+		void execute(Instruction opcode, PackedOperand& operand);
 
 		void execute(Instruction opcode);
 
-		machine(const machine &) = delete;
-		machine &operator=(const machine &) = delete;
-    
+		machine(const machine&) = delete;
+		machine& operator=(const machine&) = delete;
+
 	private:
 
-		void push(const OperandObject &obj);
-    
-		const OperandObject &pop();
+		void push(const OperandObject& obj);
 
-		void pushObj(Object *obj);
+		const OperandObject& pop();
 
-		Object *popObj();
+		void pushObj(Object* obj);
+
+		Object* popObj();
 
 		bool isRunning() const { return m_running; }
 
-		void execLoad(const OperandObject &operand);
+		void execLoad(const OperandObject& operand);
 
-		void execPush(const SymbolObject &operand);
+		void execPush(const SymbolObject& operand);
 
 		void execAdd();
 
@@ -54,22 +54,22 @@ namespace stackmachine {
 
 		void checkMemory();
 
-		void trackObject(Object *object);
+		void trackObject(Object* object);
 
 		void gc();
 
-		void checkBounds(size_t size, const std::string &instr);
+		void checkBounds(size_t size, const std::string& instr);
 	private:
 
-		int64_t m_ip{0};
+		int64_t m_ip{ 0 };
 
 		std::vector<OperandObject> m_stack;
 
-		std::vector<Object *> m_allocObjStack;
+		std::vector<Object*> m_allocObjStack;
 
 		SymbolTable m_symbolTable;
 
-		Object *m_firstObject{nullptr};
+		Object* m_firstObject{ nullptr };
 
 		GC m_GC;
 
@@ -77,11 +77,11 @@ namespace stackmachine {
 
 		size_t m_memsize;
 
-		int m_numObjects{0};
+		int m_numObjects{ 0 };
 
-		int m_maxObjects{GC_THRESHOLD};
+		int m_maxObjects{ GC_THRESHOLD };
 
-		bool m_running{true};
+		bool m_running{ true };
 	};
 
 }

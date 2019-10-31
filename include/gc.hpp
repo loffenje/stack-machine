@@ -11,9 +11,9 @@ namespace stackmachine {
 
 	class GC {
 	public:
-		void sweep(machine *m);
-		void boot(machine *m);
-		void markObjects(machine *m);
+		void sweep(machine* m);
+		void boot(machine* m);
+		void markObjects(machine* m);
 	};
 }
 
