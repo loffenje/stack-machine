@@ -10,8 +10,8 @@ namespace stackmachine {
 
     enum class DataType { //NOTE: The order is important!
         SHORT = 64,
-        INT,
-	    LONG,
+		INT,
+		LONG,
         FLOAT,
     };
 

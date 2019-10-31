@@ -9,7 +9,7 @@
 namespace stackmachine {
 
 	inline bool findAndExcludeSymbol(std::string &src, std::string &symbol)
-    {
+	{
 		size_t found = src.find_first_of(symbol);
 		if (found != std::string::npos) {
 			src.erase(found, 1);
@@ -18,7 +18,7 @@ namespace stackmachine {
 		}
 
 		return false;
-    }
+	}
 
 	inline bool findAndExcludeSymbol(std::string &src, std::string &&symbol)
     {
