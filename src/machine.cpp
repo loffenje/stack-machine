@@ -10,8 +10,8 @@
 
 using namespace stackmachine;
 
-void machine::execute(Instruction opcode) {
-  
+void machine::execute(Instruction opcode)
+{
     if (!isRunning()) {
 	throw std::logic_error{"machine is not running"};
     }
@@ -37,15 +37,14 @@ void machine::execute(Instruction opcode) {
 void machine::execute(Instruction opcode, std::vector<PackedOperand> &&operands)
 {
     if (!isRunning()) {
-	throw std::logic_error{"machine is not running"};
+		throw std::logic_error{"machine is not running"};
     }
-
 }
 
 void machine::execute(Instruction opcode, PackedOperand &operand)
 {   
     if (!isRunning()) {
-	throw std::logic_error{"machine is not running"};
+		throw std::logic_error{"machine is not running"};
     }
 
     switch (opcode.opcode) {
@@ -63,13 +62,12 @@ void machine::execute(Instruction opcode, PackedOperand &operand)
 void machine::checkBounds(size_t size, const std::string &instr)
 {
     if (size < 0 || size >= m_memsize) {
-	throw std::out_of_range{"bounds error " + instr};
+		throw std::out_of_range{"bounds error " + instr};
     }
 }
 
 void machine::execLoad(const OperandObject &operand)
 { 
-
     checkBounds(operand.nbytes, "load");
     push(operand);
     m_ip += operand.nbytes;
@@ -79,12 +77,12 @@ void machine::execLoad(const OperandObject &operand)
 
 void machine::execPush(const SymbolObject &symbol)
 {
-  auto result = pop();
-  m_symbolTable.insert(symbol.name, result.entry);
-  OperandEntry e = m_symbolTable.at(symbol.name);
-  #ifdef DEBUG 
-      std::cout << "NAME: " << e.datai << '\n';
-  #endif
+	auto result = pop();
+	m_symbolTable.insert(symbol.name, result.entry);
+	OperandEntry e = m_symbolTable.at(symbol.name);
+	#ifdef DEBUG 
+		std::cout << "NAME: " << e.datai << '\n';
+	#endif
 }
 
 void machine::flush()
@@ -221,8 +219,8 @@ void machine::execDiv()
 void machine::checkMemory()
 {
     if (static_cast<size_t>(m_ip) >= m_memsize) {
-	// halt
-	throw std::runtime_error{"Out of memory"};
+		// halt
+		throw std::runtime_error{"Out of memory"};
     }
 }
 
@@ -249,10 +247,10 @@ void machine::pushObj(Object *obj)
 Object *machine::popObj()
 {
     if (!m_allocObjStack.empty()) {
-	Object *obj = m_allocObjStack.back();
-	m_allocObjStack.pop_back();
+		Object *obj = m_allocObjStack.back();
+		m_allocObjStack.pop_back();
 
-	return obj;
+		return obj;
     }
 
     return nullptr;
@@ -267,8 +265,8 @@ void machine::push(const OperandObject &op)
 const OperandObject &machine::pop()
 {
     if (m_stack.empty()) {
-	std::cerr << "Stack underflow" << '\n';
-	exit(EXIT_FAILURE);
+		std::cerr << "Stack underflow" << '\n';
+		exit(EXIT_FAILURE);
     }
 
     OperandObject &op = m_stack.back();

@@ -12,81 +12,77 @@
 
 namespace stackmachine {
 
-class machine {
-public:
-	
-    friend class GC;
+	class machine {
+	public:
+		friend class GC;
+		machine(const size_t memsize): m_memsize{memsize} {}
 
-    machine(const size_t memsize): m_memsize{memsize} {}
+		void execute(Instruction opcode, std::vector<PackedOperand> &&operands);
 
-    int64_t getIP() const;
+		void execute(Instruction opcode, PackedOperand &operand);
 
-    void execute(Instruction opcode, std::vector<PackedOperand> &&operands);
+		void execute(Instruction opcode);
 
-    void execute(Instruction opcode, PackedOperand &operand);
-
-    void execute(Instruction opcode);
-
-    machine(const machine &) = delete;
-    machine &operator=(const machine &) = delete;
+		machine(const machine &) = delete;
+		machine &operator=(const machine &) = delete;
     
-private:
+	private:
 
-    void push(const OperandObject &obj);
+		void push(const OperandObject &obj);
     
-    const OperandObject &pop();
+		const OperandObject &pop();
 
-    void pushObj(Object *obj);
+		void pushObj(Object *obj);
 
-    Object *popObj();
+		Object *popObj();
 
-    bool isRunning() const { return m_running; }
+		bool isRunning() const { return m_running; }
 
-    void execLoad(const OperandObject &operand);
+		void execLoad(const OperandObject &operand);
 
-    void execPush(const SymbolObject &operand);
+		void execPush(const SymbolObject &operand);
 
-    void execAdd();
+		void execAdd();
 
-    void execSub();
+		void execSub();
 
-    void execMul();
+		void execMul();
 
-    void execDiv();
+		void execDiv();
 
-    void flush();
+		void flush();
 
-    void checkMemory();
+		void checkMemory();
 
-    void trackObject(Object *object);
+		void trackObject(Object *object);
 
-    void gc();
+		void gc();
 
-    void checkBounds(size_t size, const std::string &instr);
-private:
+		void checkBounds(size_t size, const std::string &instr);
+	private:
 
-    int64_t m_ip{0};
+		int64_t m_ip{0};
 
-    std::vector<OperandObject> m_stack;
+		std::vector<OperandObject> m_stack;
 
-    std::vector<Object *> m_allocObjStack;
+		std::vector<Object *> m_allocObjStack;
 
-    SymbolTable m_symbolTable;
+		SymbolTable m_symbolTable;
 
-    Object *m_firstObject{nullptr};
+		Object *m_firstObject{nullptr};
 
-    GC m_GC;
+		GC m_GC;
 
-    OpNumerator m_numerator;
+		OpNumerator m_numerator;
 
-    size_t m_memsize;
+		size_t m_memsize;
 
-    int m_numObjects{0};
+		int m_numObjects{0};
 
-    int m_maxObjects{GC_THRESHOLD};
+		int m_maxObjects{GC_THRESHOLD};
 
-    bool m_running{true};
-};
+		bool m_running{true};
+	};
 
 }
 

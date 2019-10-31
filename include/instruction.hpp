@@ -5,41 +5,36 @@
 #include <string>
 #include <cstdint>
 
-
 namespace stackmachine {
 
     class machine;
 
     enum class Opcode {
         LOAD = 128,
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	PUSH,
-	DUMP
+		ADD,
+		SUB,
+		MUL,
+		DIV,
+		PUSH,
     };
 
     struct Instruction {
         Opcode opcode;
-	std::string name;
+		std::string name;
     };
 
-    constexpr int N_INSTRUCTIONS = 7;
+    constexpr int N_INSTRUCTIONS = 6;
 
     const std::array<Instruction, N_INSTRUCTIONS> instructions {{
-	 {Opcode::LOAD, "load"},
-	 {Opcode::ADD, "add"},
-	 {Opcode::MUL, "mul"},
-	 {Opcode::DIV, "div"},
-	 {Opcode::SUB, "sub"},
-	 {Opcode::PUSH, "push"},
-	 {Opcode::DUMP, "dump"}
+		{Opcode::LOAD, "load"},
+		{Opcode::ADD, "add"},
+		{Opcode::MUL, "mul"},
+		{Opcode::DIV, "div"},
+		{Opcode::SUB, "sub"},
+		{Opcode::PUSH, "push"},
     }};
 
-
     void execute(const std::string &line, machine &m);
-
 };
 
 #endif

@@ -12,13 +12,13 @@ Number *stackmachine::valueOf(const OperandObject &op)
     OperandEntry entry = op.entry;
     switch(op.type) {
     case DataType::INT:
-	return new Int(get<int>(entry));
+		return new Int(get<int>(entry));
     case DataType::FLOAT:
-	return new Float(get<float>(entry));
+		return new Float(get<float>(entry));
     case DataType::LONG:
-	return new Long(get<long>(entry));
+		return new Long(get<long>(entry));
     case DataType::SHORT:
-	return new Short(get<short>(entry));
+		return new Short(get<short>(entry));
     }
 
     throw std::runtime_error{"Invalid type conversion"};
@@ -85,32 +85,32 @@ void OpNumerator::add(std::initializer_list<Number *> li)
 {
     Number *priorNumber = getPriorNumber(li);
     for (const auto &item : li) {
-	switch (item->rawDataType()) {
-	case DataType::SHORT: {
-	    Short *n = static_cast<Short *>(item);
-	    priorNumber->add(n->value());
-	    break;
-	}
+		switch (item->rawDataType()) {
+		case DataType::SHORT: {
+			Short *n = static_cast<Short *>(item);
+			priorNumber->add(n->value());
+			break;
+		}
 
-	case DataType::INT: {
-	    Int *n = static_cast<Int *>(item);
-	    priorNumber->add(n->value());
-	    break;
-	}
+		case DataType::INT: {
+			Int *n = static_cast<Int *>(item);
+			priorNumber->add(n->value());
+			break;
+		}
 
-	case DataType::LONG: {
-	    Long *n = static_cast<Long *>(item);
-	    priorNumber->add(n->value());
-	    break;	
-	}
+		case DataType::LONG: {
+			Long *n = static_cast<Long *>(item);
+			priorNumber->add(n->value());
+			break;	
+		}
 
-	case DataType::FLOAT: {
-	    Float *n = static_cast<Float *>(item);
-	    priorNumber->add(n->value());
-	    break;
-	}
+		case DataType::FLOAT: {
+			Float *n = static_cast<Float *>(item);
+			priorNumber->add(n->value());
+			break;
+		}
 
-	}
+		}
     }
 
     m_value = priorNumber;

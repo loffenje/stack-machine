@@ -1,31 +1,31 @@
 #include <exception>
 #include <functional>
-
-
 #include "data_type.hpp"
 
 using namespace stackmachine;
-
 	
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string &key, OperandEntry &&symbol) {
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string &key, OperandEntry &&symbol)
+{
 	return insert_impl(key, std::move(symbol));
 }
 
-
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string &key, OperandEntry &symbol) {
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const std::string &key, OperandEntry &symbol)
+{
 	return insert_impl(key, std::move(symbol));
 }
 
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const value_type &value) {
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(const value_type &value)
+{
 	return insert_impl(value.first, value.second);
 }
-
 	
-std::pair<SymbolTable::iterator, bool> SymbolTable::insert(value_type &&value) {
+std::pair<SymbolTable::iterator, bool> SymbolTable::insert(value_type &&value)
+{
 	return insert_impl(value.first, std::move(value.second));
 }
         
-SymbolTable::const_iterator SymbolTable::lookup(const std::string &symbol) const {
+SymbolTable::const_iterator SymbolTable::lookup(const std::string &symbol) const 
+{
 	for (size_t i = getIndexByKey(symbol);; i = probeForward(i)) {
 		if (m_buckets[i].first.compare(symbol) == 0) {
 		    return const_iterator(this, i);

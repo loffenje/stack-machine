@@ -8,28 +8,28 @@
 
 namespace stackmachine {
 
-   inline bool findAndExcludeSymbol(std::string &src, std::string &symbol)
-   {
-	size_t found = src.find_first_of(symbol);
-	if (found != std::string::npos) {
-	    src.erase(found, 1);
+	inline bool findAndExcludeSymbol(std::string &src, std::string &symbol)
+    {
+		size_t found = src.find_first_of(symbol);
+		if (found != std::string::npos) {
+			src.erase(found, 1);
 
-	    return true;
-	}
+			return true;
+		}
 
-	return false;
+		return false;
     }
 
-   inline bool findAndExcludeSymbol(std::string &src, std::string &&symbol)
-   {
-	size_t found = src.find_first_of(symbol);
-	if (found != std::string::npos) {
-	    src.erase(found, 1);
+	inline bool findAndExcludeSymbol(std::string &src, std::string &&symbol)
+    {
+		size_t found = src.find_first_of(symbol);
+		if (found != std::string::npos) {
+			src.erase(found, 1);
 
-	    return true;
-	}
+			return true;
+		}
 
-	return false;
+		return false;
     }
 
     static std::vector<std::string> split(const std::string &line, char delimiter, unsigned int step = 1)
@@ -38,19 +38,18 @@ namespace stackmachine {
         std::stringstream sstream{line};
         std::string item;
         while (std::getline(sstream, item, delimiter)) {
-	    ret.emplace_back(item);
+			ret.emplace_back(item);
         }      
 
-       return ret;
+		return ret;
     }
 
     inline bool equalsTo(const std::string &src, const std::string &s)
     {
-	if (src.length() > s.length()) return false;
+		if (src.length() > s.length()) return false;
 
-	return std::equal(src.begin(), src.end(), s.begin());
+		return std::equal(src.begin(), src.end(), s.begin());
     }
-
 }
 
 #endif
