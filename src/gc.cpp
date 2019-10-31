@@ -8,7 +8,6 @@ void GC::sweep(machine *m)
 {
     Object **obj = &m->m_firstObject;
     while (*obj) {
-	if (*obj == nullptr) return;
 
 	if (!(*obj)->marked) {
 	    Object *unreached = *obj; // obj wasn't reached, so remove it from the list
@@ -16,7 +15,6 @@ void GC::sweep(machine *m)
 	    *obj = unreached->next;
 	    delete unreached;
 
-	    m->popObj();
 	    m->m_numObjects--;
 
 	} else {

@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "compiler.hpp"
 #include "util.hpp"
 #include "machine.hpp"
 
@@ -24,7 +23,4 @@ int main(int argc, char *argv[]) {
     
 	}
      }
-
-    compiler c(argv[1]);
-    c.run();
 }

@@ -8,19 +8,16 @@
 #include "runtime_type.hpp"
 #include "gc.hpp"
 
+#define DEBUG
+
 namespace stackmachine {
 
 class machine {
 public:
-    
-    typedef unsigned char byte;
 	
     friend class GC;
 
-    machine(const size_t memsize): m_memsize{memsize}, m_memory{new byte[memsize]} {}
-    ~machine() { 
-        delete[] m_memory;
-    }   
+    machine(const size_t memsize): m_memsize{memsize} {}
 
     int64_t getIP() const;
 
@@ -53,11 +50,13 @@ private:
 
     void execSub();
 
-    void execDump();
-
     void execMul();
 
     void execDiv();
+
+    void flush();
+
+    void checkMemory();
 
     void trackObject(Object *object);
 
@@ -66,9 +65,7 @@ private:
     void checkBounds(size_t size, const std::string &instr);
 private:
 
-    int64_t m_ip;
-
-    int64_t m_sp;
+    int64_t m_ip{0};
 
     std::vector<OperandObject> m_stack;
 
@@ -81,8 +78,6 @@ private:
     GC m_GC;
 
     OpNumerator m_numerator;
-
-    byte *m_memory;
 
     size_t m_memsize;
 

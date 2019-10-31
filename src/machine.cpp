@@ -3,7 +3,11 @@
 
 #include "machine.hpp"
 #include "runtime_type.hpp"
+
+#ifdef DEBUG
 #include <cstdio>
+#endif
+
 using namespace stackmachine;
 
 void machine::execute(Instruction opcode) {
@@ -24,9 +28,6 @@ void machine::execute(Instruction opcode) {
 	    return;
 	 case Opcode::DIV:
 	    execDiv();
-	    return;
-	 case Opcode::DUMP:
-	    execDump();
 	    return;
     }
 
@@ -72,17 +73,25 @@ void machine::execLoad(const OperandObject &operand)
     checkBounds(operand.nbytes, "load");
     push(operand);
     m_ip += operand.nbytes;
-    if (static_cast<size_t>(m_ip) >= m_memsize) {
-        // halt
-    }    
+    
+    checkMemory();
 }
 
 void machine::execPush(const SymbolObject &symbol)
 {
   auto result = pop();
   m_symbolTable.insert(symbol.name, result.entry);
-  OperandEntry e = m_symbolTable.at(symbol.name); 
-  std::cout << "NAME: " << e.datai << std::endl;
+  OperandEntry e = m_symbolTable.at(symbol.name);
+  #ifdef DEBUG 
+      std::cout << "NAME: " << e.datai << '\n';
+  #endif
+}
+
+void machine::flush()
+{
+    for (int i = 0; i < m_allocObjStack.size(); i++) {
+        popObj();
+    }
 }
 
 void machine::execAdd()
@@ -94,9 +103,10 @@ void machine::execAdd()
     // define what data type should be casted to 
     OperandObject result = OperandObject::createFromOperands(x,y);
 
-    // allocate number objects 
+    // allocate and track objects in order to flush them later 
     Number *numX = valueOf(x);
     trackObject(numX);
+
     Number *numY = valueOf(y);
     trackObject(numY);
 
@@ -104,78 +114,125 @@ void machine::execAdd()
     Number *num = m_numerator.value();
     trackObject(num);
 
+    // pop unused objects and collect them via gc later
+    flush();
+
     OperandEntry entry = typeOf(num); 
     result.entry = entry;
     std::cout << num->value() << '\n';
     push(result);
-    if (static_cast<size_t>(m_ip) >= m_memsize) {
-	// halt
-    }
+
+    checkMemory();
 }
 
 void machine::execSub()
 {
-
+    // pop elements from the stack
     OperandObject x = pop();
     OperandObject y = pop();
+    
+    // define what data type should be casted to 
     OperandObject result = OperandObject::createFromOperands(x,y);
+    
+    // allocate and track objects in order to flush them later 
     Number *numX = valueOf(x);
+    trackObject(numX);
+
     Number *numY = valueOf(y);
+    trackObject(numY);
+
     m_numerator.sub({numX, numY});
     Number *num = m_numerator.value();
-    auto entry = typeOf(num);
+    trackObject(num);
+
+    // pop unused objects and collect them via gc later
+    flush();
+
+    OperandEntry entry = typeOf(num);
     result.entry = entry;
     std::cout << num->value() << '\n';
     push(result);
-    if (static_cast<size_t>(m_ip) >= m_memsize) {
-	// halt
-    }
+    
+    checkMemory();
 }
 
 void machine::execMul()
 {
+    // pop elements from the stack
     OperandObject x = pop();
     OperandObject y = pop();
+ 
+    // define what data type should be casted to 
     OperandObject result = OperandObject::createFromOperands(x,y);
+    
+    // allocate and track objects in order to flush them later 
     Number *numX = valueOf(x);
+    trackObject(numX);
+
     Number *numY = valueOf(y);
+    trackObject(numY);
+
     m_numerator.mul({numX, numY});
     Number *num = m_numerator.value();
-    auto entry = typeOf(num);
+    trackObject(num);
+
+    // pop unused objects and collect them via gc later
+    flush();
+
+    OperandEntry entry = typeOf(num);
     result.entry = entry;
     std::cout << num->value() << '\n';
     push(result);
-    if (static_cast<size_t>(m_ip) >= m_memsize) {
-	// halt
-    }
+    
+    checkMemory();
 }
 
 void machine::execDiv()
-{
-	
+{	
+    // pop elements from the stack
     OperandObject x = pop();
     OperandObject y = pop();
+ 
+    // define what data type should be casted to 
     OperandObject result = OperandObject::createFromOperands(x,y);
-    Number *numX = valueOf(x); // trackObject(numX); 
-    Number *numY = valueOf(y); // trackObject(numX);
+
+    // allocate and track objects in order to flush them later 
+    Number *numX = valueOf(x);
+    trackObject(numX);
+
+    Number *numY = valueOf(y);
+    trackObject(numY);
+
     m_numerator.div({numX, numY});
     Number *num = m_numerator.value();
-    auto entry = typeOf(num);
+    trackObject(num);
+   
+    // pop unused objects and collect them via gc later
+    flush();
+
+    OperandEntry entry = typeOf(num);
     result.entry = entry;
     std::cout << num->value() << '\n';
     push(result);
-    if (static_cast<size_t>(m_ip) >= m_memsize) {
-	// halt
-    }
+    
+    checkMemory();
 }
 
-void machine::execDump()
+void machine::checkMemory()
 {
-	//
+    if (static_cast<size_t>(m_ip) >= m_memsize) {
+	// halt
+	throw std::runtime_error{"Out of memory"};
+    }
 }
 
 void machine::trackObject(Object *obj)
 {
+
+    #ifdef DEBUG
+	printf("NUM OBJECTS: %d\n", m_numObjects);
+        printf("MAX OBJECTS: %d\n", m_maxObjects);
+    #endif
     if (m_numObjects == m_maxObjects) gc();
     obj->next = m_firstObject;
     m_firstObject = obj;
@@ -223,10 +280,14 @@ const OperandObject &machine::pop()
 
 void machine::gc()
 {
-    int numObjects = m_numObjects;
+    #ifdef DEBUG
+        int numObjects = m_numObjects;
+    #endif
+
     m_GC.boot(this);
 
     m_maxObjects = m_numObjects * 2;
-
-    printf("Collected %d objects, %d remaining", numObjects - m_numObjects, m_numObjects);
+    #ifdef DEBUG
+        printf("Collected %d objects, %d remaining\n", numObjects - m_numObjects, m_numObjects);
+    #endif
 }
